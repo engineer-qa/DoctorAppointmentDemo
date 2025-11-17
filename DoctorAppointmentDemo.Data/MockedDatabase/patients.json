@@ -1,1 +1,14 @@
-﻿
+[
+  {
+    "IllnessType": 4,
+    "AdditionalInfo": "Болит кожа",
+    "Address": "Харьков",
+    "Name": "Slava",
+    "Surname": "Popov",
+    "Phone": null,
+    "Email": null,
+    "Id": 1,
+    "CreatedAt": "2025-11-17T14:37:53.8294997+02:00",
+    "UpdatedAt": "0001-01-01T00:00:00"
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "Patient": {
+      "IllnessType": 4,
+      "AdditionalInfo": "Болит кожа",
+      "Address": "Харьков",
+      "Name": "Slava",
+      "Surname": "Popov",
+      "Phone": null,
+      "Email": null,
+      "Id": 1,
+      "CreatedAt": "2025-11-17T14:37:53.8294997+02:00",
+      "UpdatedAt": "0001-01-01T00:00:00"
+    },
+    "Doctor": {
+      "DoctorType": 1,
+      "Experience": 20,
+      "Salary": 0.0,
+      "Name": "Adolf",
+      "Surname": "Hitler",
+      "Phone": null,
+      "Email": null,
+      "Id": 5,
+      "CreatedAt": "2025-11-13T22:06:26.0860152+02:00",
+      "UpdatedAt": "0001-01-01T00:00:00"
+    },
+    "DateTimeFrom": "2025-11-17T14:30:00",
+    "DateTimeTo": "2025-11-17T15:30:00",
+    "Description": "Первичный осмотр",
+    "Id": 2,
+    "CreatedAt": "2025-11-17T14:44:29.3795491+02:00",
+    "UpdatedAt": "0001-01-01T00:00:00"
+  }
+]

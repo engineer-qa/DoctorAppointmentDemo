@@ -20,7 +20,14 @@ namespace MyDoctorAppointment.Data.Repositories
 
         public override void ShowInfo(Doctor doctor)
         {
-            Console.WriteLine(); // implement view of all object fields
+            string[] info =
+            {
+                $"Doctor type:{doctor.DoctorType}\n",
+                $"Doctor expirience: {doctor.Experience}\n",
+                $"Doctor salary: {doctor.Salary}\n"
+            };
+            var message = string.Concat(info);
+            Console.WriteLine(message);
         }
 
         protected override void SaveLastId()
