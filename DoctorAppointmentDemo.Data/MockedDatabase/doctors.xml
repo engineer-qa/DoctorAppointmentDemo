@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfDoctor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Doctor>
+    <Id>8</Id>
+    <CreatedAt>2025-11-25T18:08:19.2074286+02:00</CreatedAt>
+    <UpdatedAt>0001-01-01T00:00:00</UpdatedAt>
+    <Name>Мистер</Name>
+    <Surname>Пиглин</Surname>
+    <DoctorType>Dentist</DoctorType>
+    <Experience>3</Experience>
+    <Salary>0</Salary>
+  </Doctor>
+</ArrayOfDoctor>

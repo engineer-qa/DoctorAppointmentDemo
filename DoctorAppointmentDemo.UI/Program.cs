@@ -1,4 +1,5 @@
-﻿using DoctorAppointmentDemo.Service.Interfaces;
+﻿using DoctorAppointmentDemo.Data.Configuration;
+using DoctorAppointmentDemo.Service.Interfaces;
 using DoctorAppointmentDemo.Service.Services;
 using MyDoctorAppointment.Domain.Entities;
 using MyDoctorAppointment.Service.Interfaces;
@@ -8,21 +9,44 @@ namespace MyDoctorAppointment
 {
     public class DoctorAppointment
     {
-        private readonly IDoctorService _doctorService;
-        private readonly IAppointmentService _appointmentService;
-        private readonly IPatientService _patientService;
-
-        public DoctorAppointment()
-        {
-            _doctorService = new DoctorService();
-            _appointmentService = new AppointmentService();
-            _patientService = new PatientService();
-        }
+        private IDoctorService _doctorService;
+        private IAppointmentService _appointmentService;
+        private IPatientService _patientService;
 
         public void Menu()
         {
+            bool initialized = false;
+
             while (true)
             {
+                if (!initialized)
+                {
+                    Console.WriteLine("Выберите формат хранения данных:\n1 — JSON\n2 — XML");
+
+                    var storageInput = Console.ReadLine();
+
+                    if (storageInput == "1")
+                    {
+                        RepositorySettings.UseXml = false;
+                    }
+                    else if (storageInput == "2")
+                    {
+                        RepositorySettings.UseXml = true;
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Вводить можно только 1 или 2");
+                        continue;
+                    }
+
+                    _doctorService = new DoctorService();
+                    _appointmentService = new AppointmentService();
+                    _patientService = new PatientService();
+
+                    initialized = true;
+                }
+
                 Console.WriteLine("Выберите пункт меню:\n");
 
                 foreach (Domain.Enums.MenuTypes value in Enum.GetValues(typeof(Domain.Enums.MenuTypes)))

@@ -1,7 +1,9 @@
-﻿using MyDoctorAppointment.Data.Configuration;
+﻿using DoctorAppointmentDemo.Data.Configuration;
+using MyDoctorAppointment.Data.Configuration;
 using MyDoctorAppointment.Data.Interfaces;
 using MyDoctorAppointment.Domain.Entities;
 using Newtonsoft.Json;
+using System.Xml.Serialization;
 
 namespace MyDoctorAppointment.Data.Repositories
 {
@@ -16,8 +18,27 @@ namespace MyDoctorAppointment.Data.Repositories
             source.Id = ++LastId;
             source.CreatedAt = DateTime.Now;
 
-            File.WriteAllText(Path, JsonConvert.SerializeObject(GetAll().Append(source), Formatting.Indented));
-            SaveLastId();
+            if (!RepositorySettings.UseXml)
+            {
+                File.WriteAllText(Path, JsonConvert.SerializeObject(GetAll().Append(source), Formatting.Indented));
+                SaveLastId();
+            }
+            else
+            {
+                var items = GetAll().ToList();
+                items.Add(source);
+
+                CreateDirectory(Path);
+
+                var serializer = new XmlSerializer(typeof(List<TSource>));
+                using (var writer = new StreamWriter(Path))
+                {
+                    serializer.Serialize(writer, items);
+                }
+
+                SaveLastId();
+            }
+
 
             return source;
         }
@@ -27,8 +48,22 @@ namespace MyDoctorAppointment.Data.Repositories
             if (GetById(id) is null)
                 return false;
 
-            File.WriteAllText(Path, JsonConvert.SerializeObject(GetAll().Where(x => x.Id != id), Formatting.Indented));
+            if (!RepositorySettings.UseXml)
+            {
+                File.WriteAllText(Path, JsonConvert.SerializeObject(GetAll().Where(x => x.Id != id), Formatting.Indented));
+            }
+            else
+            {
+                var items = GetAll().Where(x => x.Id != id).ToList();
 
+                CreateDirectory(Path);
+
+                var serializer = new XmlSerializer(typeof(List<TSource>));
+                using (var writer = new StreamWriter(Path))
+                {
+                    serializer.Serialize(writer, items);
+                }
+            }
             return true;
         }
 
@@ -36,18 +71,49 @@ namespace MyDoctorAppointment.Data.Repositories
         {
             if (!File.Exists(Path))
             {
-                File.WriteAllText(Path, "[]");
+                if (!RepositorySettings.UseXml)
+                {
+                    File.WriteAllText(Path, "[]");
+                }
+                else
+                {
+                    CreateDirectory(Path);
+
+                    var serializer = new XmlSerializer(typeof(List<TSource>));
+
+                    using (var writer = new StreamWriter(Path))
+                    {
+                        serializer.Serialize(writer, new List<TSource>());
+                    }
+                }
             }
 
-            var json = File.ReadAllText(Path);
-
-            if (string.IsNullOrWhiteSpace(json))
+            if (!RepositorySettings.UseXml)
             {
-                File.WriteAllText(Path, "[]");
-                json = "[]";
-            }
+                var json = File.ReadAllText(Path);
 
-            return JsonConvert.DeserializeObject<List<TSource>>(json)!;
+                if (string.IsNullOrWhiteSpace(json))
+                {
+                    File.WriteAllText(Path, "[]");
+                    json = "[]";
+                }
+                return JsonConvert.DeserializeObject<List<TSource>>(json)!;
+            }
+            else
+            {
+                var fileInfo = new FileInfo(Path);
+                if (fileInfo.Length == 0)
+                {
+                    return new List<TSource>();
+                }
+
+                var serializer = new XmlSerializer(typeof(List<TSource>));
+                using (var stream = File.OpenRead(Path))
+                {
+                    var deserialized = serializer.Deserialize(stream) as List<TSource>;
+                    return deserialized ?? new List<TSource>();
+                }
+            }
         }
 
         public TSource? GetById(int id)
@@ -60,15 +126,41 @@ namespace MyDoctorAppointment.Data.Repositories
             source.UpdatedAt = DateTime.Now;
             source.Id = id;
 
-            File.WriteAllText(Path, JsonConvert.SerializeObject(GetAll().Select(x => x.Id == id ? source : x), Formatting.Indented));
+            if (!RepositorySettings.UseXml)
+            {
+                File.WriteAllText(Path, JsonConvert.SerializeObject(GetAll().Select(x => x.Id == id ? source : x), Formatting.Indented));
+            }
+            else
+            {
+                var items = GetAll().Select(x => x.Id == id ? source : x).ToList();
+                CreateDirectory(Path);
+                var serializer = new XmlSerializer(typeof(List<TSource>));
+                using (var writer = new StreamWriter(Path))
+                {
+                    serializer.Serialize(writer, items);
+                }
+            }
 
-            return source;
+                return source;
         }
 
         public abstract void ShowInfo(TSource source);
 
         protected abstract void SaveLastId();
 
-        protected dynamic ReadFromAppSettings() => JsonConvert.DeserializeObject<dynamic>(File.ReadAllText(Constants.AppSettingsPath))!;
+        protected dynamic ReadFromAppSettings()
+        {
+            var selectedAppSettingsPath = RepositorySettings.UseXml ? Constants.AppSettingsXmlPath : Constants.AppSettingsJsonPath;
+            return JsonConvert.DeserializeObject<dynamic>(File.ReadAllText(selectedAppSettingsPath))!;
+        }
+
+        protected void CreateDirectory(string filePath)
+        {
+            var dir = System.IO.Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrWhiteSpace(dir) && !Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+        }
     }
 }

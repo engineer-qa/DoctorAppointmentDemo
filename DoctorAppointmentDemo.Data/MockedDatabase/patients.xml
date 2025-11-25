@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfPatient xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Patient>
+    <Id>2</Id>
+    <CreatedAt>2025-11-25T18:04:26.0935236+02:00</CreatedAt>
+    <UpdatedAt>0001-01-01T00:00:00</UpdatedAt>
+    <Name>Андрей</Name>
+    <Surname>Машина</Surname>
+    <IllnessType>SkinDisease</IllnessType>
+    <AdditionalInfo>Болит очень</AdditionalInfo>
+    <Address>Винница</Address>
+  </Patient>
+</ArrayOfPatient>
